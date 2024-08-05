@@ -154,13 +154,13 @@ func writeRow(pdf *gopdf.GoPdf, item string, quantity int, rate float64) {
 	pdf.SetTextColor(0, 0, 0)
 
 	total := float64(quantity) * rate
-	amount := strconv.FormatFloat(total, 'f', 2, 64)
+	amount := formatFloat(total)
 
 	_ = pdf.Cell(nil, item)
 	pdf.SetX(quantityColumnOffset)
 	_ = pdf.Cell(nil, strconv.Itoa(quantity))
 	pdf.SetX(rateColumnOffset)
-	_ = pdf.Cell(nil, currencySymbols[file.Currency]+strconv.FormatFloat(rate, 'f', 2, 64))
+	_ = pdf.Cell(nil, currencySymbols[file.Currency]+formatFloat(rate))
 	pdf.SetX(amountColumnOffset)
 	_ = pdf.Cell(nil, currencySymbols[file.Currency]+amount)
 	pdf.Br(24)
@@ -190,7 +190,7 @@ func writeTotal(pdf *gopdf.GoPdf, label string, total float64) {
 	if label == totalLabel {
 		_ = pdf.SetFont("Inter-Bold", "", 11.5)
 	}
-	_ = pdf.Cell(nil, currencySymbols[file.Currency]+strconv.FormatFloat(total, 'f', 2, 64))
+	_ = pdf.Cell(nil, currencySymbols[file.Currency]+formatFloat(total))
 	pdf.Br(24)
 }
 
@@ -206,4 +206,24 @@ func getImageDimension(imagePath string) (int, int) {
 		fmt.Fprintf(os.Stderr, "%s: %v\n", imagePath, err)
 	}
 	return image.Width, image.Height
+}
+
+func formatFloat(f float64) string {
+	s := strconv.FormatFloat(f, 'f', 2, 64)
+	parts := strings.Split(s, ".")
+	intPart := parts[0]
+	decPart := parts[1]
+
+	if len(intPart) > 3 {
+		formatted := ""
+		for i, c := range intPart {
+			if i > 0 && (len(intPart)-i)%3 == 0 {
+				formatted += ","
+			}
+			formatted += string(c)
+		}
+		intPart = formatted
+	}
+
+	return intPart + "." + decPart
 }
