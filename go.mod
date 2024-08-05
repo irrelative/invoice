@@ -1,9 +1,5 @@
 module github.com/irrelative/invoice
 
-require github.com/irrelative/invoice@v0.0.0-20231130132541-0fb2e9d84385
-replace github.com/maaslalani/invoice => github.com/irrelative/invoice v0.0.0-20231130132541-0fb2e9d84385
-
-
 go 1.20
 
 require (
